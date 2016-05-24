@@ -1,0 +1,62 @@
+= OSGi wrapper for Milton 2.7
+
+Milton is a simple web application that exposes a file system based repository through WebDAV.
+This project only provides a wrapper for Milton server CE (community edition) so that it can get installed in an OSGi container.
+This wrapper has been configured with basic authentication, authorizing the webdav role to access webdav resources. Confer web.xml.
+It was enough for the project purpose but others may have higher requirements.
+
+For more information on Milton see: http://milton.io/
+
+
+Source repository:
+
+https://github.com/miltonio/milton2/tree/master/milton-server-ce
+
+== Build and Deployment
+
+Milton4fuse project can simply be compiled with Maven:
+
+ mvn package
+
+It can then get deployed in Fuse/Karaf with the following command. It will then use the default /webdav context path:
+
+ osgi:install -s file:/path2project/milton4fuse/target/milton4fuse.war
+
+It is possible to overwrite the configured context path by specifying a new value during the bundle installation:
+
+ osgi:install -s webbundle:file:/home/fgiloux/workspace/milton4fuse/target/milton4fuse.war?Web-ContextPath=otherdav
+ 
+It is important to note that the directory on the file system will need to match the context path:
+
+ ${KARAF_BASE}/data/webdav or ${KARAF_BASE}/data/otherdav
+
+== Testing
+
+The wrapper has been quickly tested with JBOss Fuse 6.2.1
+
+Quick tests can be performed on Linux with lftp.
+On Windows the explorer supports WebDAV. The WebDAV server URL can be specified in Windows Explorer address bar.
+
+A few instructions with lftp.
+lftp can be used to quickly access and interact with the WebDAV interface: <http://linux.die.net/man/1/lftp>
+
+.Connection
+ # lftp http://localhost:8181/webdav
+
+.Directory creation
+ # mkdir mydir
+
+.Moving to a directory
+ # cd mydir
+
+.Pushing a file to the server
+ # put README.adoc -o webdav-Readme.adoc
+
+.Reading a file
+ # cat webdav-Readme.adoc
+
+.Moving a file
+ # mv webdav-Readme.adoc mydir/webdav-Readme.adoc
+
+.Deleting a file
+ # rm mydir/wedav-Readme.adoc
